@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+    <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Dashboard</title>
+  <style>
+    body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    }
+
+    .sidebar {
+        width: 150px;
+        background-color: #121212;
+        color: #5195bd;
+        padding: 20px;
+    }
+
+    .sidebar h2 {
+        text-align: center;
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar ul li {
+        margin: 15px 0;
+    }
+
+    .sidebar ul li a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+        border-radius: 5px;
+    align-items: center;
+        text-align: center;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .sidebar ul li a:hover {
+        background-color: #34495e;
+    }
+
+    .main-content {
+        flex: 1;
+        padding: 20px;
+        background-color: #000;
+        overflow-y: auto;
+    }
+
+    header {
+        background-color:#000;
+        color: #5195bd;
+        padding: 20px;
+        text-align: center;
+        justify-content: center;
+        border-radius: 5px;
+        height: 60px;
+    }
+
+    header:hover{
+        background-color: #121212;
+        color: aquamarine;
+        transition-duration:0.4s ;
+        transition-timing-function: ease-in-out;
+    }
+
+    section {
+        margin: 20px 0;
+        padding: 20px;
+        background-color: #000;
+        color:rgb(191, 204, 212);
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    section:hover{
+        background-color: #121212;
+        color: #5195bd;
+        font-size: 20px;
+        transition-duration: 0.4s;
+        padding: 25px;
+    }
+    h1, h2 {
+        margin: 0;
+    }
+    p {
+        margin: 15px 0 0;
+        color: #fff;
+    }
+
+    .table-container {
+            max-height: 300px; 
+            overflow-y: auto; 
+            border-radius:  4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table:hover{
+            max-height: 300px; 
+            overflow-y: auto; 
+            border-radius:  4px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #5195bd;
+            color: #fff;
+        }
+        .table-container:hover{
+            max-height: 300px; 
+            overflow-y: auto; 
+            border-radius:  4px;
+        }
+        .hehe{
+            background-color: transparent;
+            color: #fff  ;
+            border: transparent;
+            font-size: 17px;
+        }
+        .hehe:hover{
+            color: #5195bd;
+            transition-duration: 0.4s;
+        }
+        .box{
+            height: 6px;
+        }
+
+  </style>
+  
+</head>
+<body>
+    <div class="main-content">
+        <header>
+            <h1>{{campaign.campaign_name}}</h1>
+        </header>
+        <section id="analytics">
+            <h2>Advertisements</h2>
+            <div class="box"></div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                            <th>Advertisement ID</th>
+                            <th>Advertisement Name</th>
+                            <th>Influencer Handling</th>
+                            <th>Budget</th>
+                    </thead>
+                    <tbody>
+                        {% for entry in campaign_advertisement %}
+                        <tr>
+                        <td>{{ entry.id }}</td> 
+                        <td>{{ entry.advertisement_name }}</td>
+                        <td>{{ entry.influencer_id }}</td>
+                        <td>{{ entry.budget }}</td>     
+                        </tr>
+                        {% endfor %} 
+                    </tbody>
+                </table>
+            </div>        
+        </section>
+        <form method="POST" action="\campaign\new_advertisement">
+            <div class="form-control">
+                <input type="hidden" name="campaign_id" value = '{{ campaign.campaign_id }}'>
+                <input type="hidden" name="campaign_niche" value = '{{ campaign.campaign_niche }}'>
+                <input type="hidden" name="influencer_id" value = '{{ influencer_id }}'>
+                <button type="submit" class='hehe'>
+                    <h2>Add New Advertisement Request</h2>
+                </button>
+            </div>
+        </form>
+    </div>
+      <div class="sidebar">
+        <h2>QuickAccess</h2>
+        <ul>
+            <li><a href="/sponsor/dashboard">Home</a></li>
+            <li><a href="/sponsor/new_campaign">Begin Campaign</a></li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="#profile">Sponsor Campaigns</a></li>
+            <li><a href="/logout">Log Out</a></li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -2,7 +2,6 @@ from flask import Flask, render_template,request,flash,redirect,url_for
 from application.config import Config
 from application.database import db
 from application.model import *
-from application.routes import *
 
 def create_app():
     app = Flask(__name__)
@@ -92,6 +91,9 @@ def create_app():
     return app
 
 app = create_app()
+
+from application.routes import *
+
 
 if __name__ == '__main__':
     app.run(debug=True)

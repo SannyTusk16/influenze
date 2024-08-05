@@ -171,7 +171,7 @@
                         <td>{{ entry.end_date }}</td>
                         <td>{{ entry.campaign_niche }}</td>
                         <td>
-                            <form method="POST" action="{{ url_for('campaign_advertisement')}}">
+                            <form method="POST" action="{{ url_for('search_campaign_advertisement')}}">
                                 <input type="hidden" name="campaign_id" value="{{ entry.campaign_id }}">
                                 <input type="hidden" name="niche_id" value="{{ entry.niche_id }}">
                                 <button type="submit">View</button>
@@ -200,10 +200,10 @@
                         <td>{{ entry.user_id }}</td>
                         <td>{{ entry.user_name }}</td>
                         <td>{{ entry.influencer_id }}</td>
-                        <td>{{ entry.sponsor_id }}</td>
                         <td>
-                            <form method="POST" action="{{ url_for('campaign_advertisement')}}">
-                                <input type="hidden" name="campaign_id" value="{{ entry.user_id}}">
+                            <form method="POST" action="{{ url_for('influencer_advertisements')}}">
+                                <input type="hidden" name="user_id" value="{{ entry.user_id }}">
+                                <input type="hidden" name="influencer_id" value="{{ entry.influencer_id }}">
                                 <input type="hidden" name="type" value="user">
                                 <button type="submit">View</button>
                             </form>

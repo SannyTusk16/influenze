@@ -147,9 +147,16 @@
               <div class="form-group">
                 <input type="text" class="form-control" id="advertisment_name" name="advertisement_name" placeholder="Enter your advertisment name">
               </div>
-              <div class="form-group">
-                <input type="text" class="form-control" id="influencer_id" name="influencer_id" placeholder="Influencer id">
-              </div>
+                {% if influencer_id %}
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" id="influencer_id" name="influencer_id" value="{{ influencer_id }}">
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="influencer_id" name="influencer_id" placeholder="Influencer id">
+                    </div>
+                {% endif %}
+              
               <div class="form-group">
                 <input type="text" class="form-control" id="budget" name="budget" placeholder="Budget">
               </div>
@@ -159,6 +166,9 @@
               <div class = "form-group">
                 <input type="hidden" class="form-control" id="niche_id" name="niche_id" value="{{ niche_id }}">
               </div>
+              <div class="form-group">
+                <input type="hidden" class="form-control" id="response" name="response" value="True">
+            </div>
               <button type="submit" class="btn btn-primary btn-block">Request Advertisement</button>
             </form>
         </div>

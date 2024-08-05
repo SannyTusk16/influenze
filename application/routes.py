@@ -163,9 +163,10 @@ def campaign_advertisement():
         print("NicheID/campaign ")
         print(niche_id)
         
-        new_advertisement = Advertisement(influencer_id=influencer_id,advertisement_name=advertisement_name,budget=budget,status='Requested',campaign_id=campaign_id,niche_id=niche_id)
-        db.session.add(new_advertisement)
-        db.session.commit() 
+        if request.form.get('response') :
+            new_advertisement = Advertisement(influencer_id=influencer_id,advertisement_name=advertisement_name,budget=budget,status='Requested',campaign_id=campaign_id,niche_id=niche_id)
+            db.session.add(new_advertisement)
+            db.session.commit() 
         print("campaignID/campaign")
         print(campaign_id)
         campaign = Campaign.query.filter_by(campaign_id=campaign_id).first()
@@ -194,13 +195,14 @@ def add_advertisement():
     if request.method=='POST':
         campaign_id=request.form.get('campaign_id')
         campaign_niche=request.form.get('campaign_niche')
+        campaign_influencer=request.form.get('influencer_id')
         print("Campaign##ID")
         print(campaign_id)
         print(campaign_niche)
         
         niche=CampaignNiche.query.filter_by(campaign_id=campaign_id).first()
         
-        return render_template('new_advertisement.html',campaign_id=campaign_id,niche_id=niche.niche_id)
+        return render_template('new_advertisement.html',campaign_id=campaign_id,niche_id=niche.niche_id,influencer_id=campaign_influencer)
 
 @app.route('/sponsor/campaign/delete_advertisement', methods=['POST'])
 def delete_advertisement():
@@ -283,6 +285,7 @@ def confirm_update_campaign():
                 niche_name = request.form.get('campaign_niche'),
                 niche_population = 1000
             )
+            db.session.add(new_niche)
         
         db.session.commit()
         
@@ -507,13 +510,17 @@ def search():
         if session['user_role'] == 'Sponsor':
             isInfluencer = False
         campaigns = Campaign.query.all()
-        users = User.query.all()
+        users = User.query.filter_by(user_role='Influencer')
         return render_template('search.html',users=users,campaigns=campaigns,isInfluencer = isInfluencer)
     if request.method == 'POST':
         search = request.form.get('search')
         if not search:
             flash('Please enter search keyword')
             return redirect(url_for('index'))
+        
+        isInfluencer = True
+        if session['user_role'] == 'Sponsor':
+            isInfluencer = False
         
         campaigns = Campaign.query.filter_by(campaign_name = search).all()
         user = User.query.filter_by(user_name = search).all()
@@ -524,8 +531,42 @@ def search():
         print("Campaigns")
         for i in campaigns:
             print(i)
-        
+
         print("User")
         for i in user:
             print(i)
-        return render_template('search.html',users=user,campaigns=campaigns)
+        return render_template('search.html',users=user,campaigns=campaigns,isInfluencer = isInfluencer)
+    
+    
+@app.route('/search/influencer/advertisements',methods=['GET','POST'])
+def influencer_advertisements():
+    if request.method=='POST':
+        influencer_id = request.form.get('influencer_id')
+        
+        user = User.query.filter_by(influencer_id = influencer_id).first()
+        
+        
+        influencer_advertisements = Advertisement.query.filter_by(influencer_id = influencer_id).all()
+        
+        for i in influencer_advertisements:
+            print(i.id)
+    
+        influencer = Influencer.query.filter_by(influencer_id = influencer_id).first()
+        
+        return render_template('search_influencer_advertisement.html',user= user,influencer_advertisements=influencer_advertisements,influencer = influencer)
+        
+        
+@app.route('/search/campaign/advertisement',methods=['GET','POST'])
+def search_campaign_advertisement():    
+    if request.method=='POST':
+        print("oompa")
+        campaign_id = request.form.get('campaign_id')
+        print(session['influencer_id'])
+        
+        print(request.form.get('campaign_id'))
+        
+        campaign_advertisement = Advertisement.query.filter_by(campaign_id = campaign_id).all()
+    
+        
+        return render_template('search_campaign_advertisement.html',campaign_advertisement = campaign_advertisement,campaign = Campaign.query.filter_by(campaign_id=campaign_id).first(),influencer_id=session['influencer_id'])
+        

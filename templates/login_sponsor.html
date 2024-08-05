@@ -93,6 +93,11 @@
             background-color: #5195bd;
         }
     </style>
+    <script type="text/javascript">
+        function showAlert() {
+            alert("Registers");
+        }
+    </script>
 </head>
 <body>
     <nav>INFLUENZE</nav>
@@ -110,7 +115,7 @@
                 <input type="password" class="form-control" id="password" name="user_password" placeholder="Enter your password">
               </div>
             <div class="buttons">
-              <button type="submit" class="btn btn-primary btn-block">Login</button>
+              <button type="submit" onclick="showAlert()" class="btn btn-primary btn-block">Login</button>
               <a href="/sponsor_register">SIGN UP</a>
             </div>
             </form>

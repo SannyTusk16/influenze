@@ -152,69 +152,8 @@
 <body>
     <div class="main-content">
         <header>
-            <h1>Welcome Admin</h1>
+            <h1>{{user.user_name}} Portfolio</h1>
         </header>
-        
-        <section id="Users">
-            <h2>Users</h2>
-            <div class="box"></div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                            <th>User ID</th>
-                            <th>User Name</th>
-                            <th>User Role</th>
-                            <th>Sponsor ID</th>
-                            <th>Influencer ID</th>
-                            <!-- <th>Notes</th> -->
-                    </thead>
-                    <tbody>
-                        {% for entry in users %}
-                        <tr>
-                        <td>{{ entry.user_id }}</td>
-                        <td>{{ entry.user_name }}</td>
-                        <td>{{ entry.user_role }}</td>
-                        <td>{{ entry.sponsor_id }}</td>
-                        <td>{{ entry.influencer_id }}</td>
-                        {% endfor %} 
-                    </tbody>
-
-                </table>
-            </div>
-        </section>
-        <section id="Campaigns">
-            <h2>Campaigns</h2>
-            <div class="box"></div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                            <th>Campaign ID</th>
-                            <th>Campaign Name</th>
-                            <th>Sponsor ID</th>
-                            <th>Revenue Expected</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Campaign Niche</th>
-                            <th>Visiblity</th>
-                            <!-- <th>Notes</th> -->
-                    </thead>
-                    <tbody>
-                        {% for entry in campaigns %}
-                        <tr>
-                        <td>{{ entry.campaign_id }}</td>
-                        <td>{{ entry.campaign_name}}</td>
-                        <td>{{ entry.sponsor_id }}</td>
-                        <td>{{ entry.revenue_expected }}</td>
-                        <td>{{ entry.start_date }}</td>
-                        <td>{{ entry.end_date }}</td>
-                        <td>{{ entry.campaign_niche }}</td>
-                        <td>{{ entry.visibility }}</td>
-                        {% endfor %} 
-                    </tbody>
-
-                </table>
-            </div>
-        </section>
         <section id="Advertisements">
             <h2>Advertisements</h2>
             <div class="box"></div>
@@ -230,31 +169,39 @@
                             <!-- <th>Notes</th> -->
                     </thead>
                     <tbody>
-                        {% for entry in advertisements %}
+                        {% for entry in influencer_advertisements %}
                         <tr>
                         <td>{{ entry.id }}</td>
                         <td>{{ entry.advertisement_name }}</td>
                         <td>{{ entry.campaign_id }}</td>
                         <td>{{ entry.niche_id }}</td>
                         <td>{{ entry.budget }}</td>
-                        <td>{{ entry.status }}</td>
+                        <td>{{ entry.status }}</td>  
+                        </tr>
                         {% endfor %} 
                     </tbody>
 
                 </table>
             </div>
         </section>
+        <section id="profile">
+            <h2>Profile</h2>
+            <p>User ID : {{user.user_id}}</p>
+            <p>Influencer ID : {{user.influencer_id}}</p>
+            <p>Mail ID : {{user.user_mail}}</p>
+            <p>Influencer Reach : {{influencer.influencer_reach}}</p>
+            <p>Influencer Rating : {{influencer.influencer_rating}}</p>
+        </section>
     </div>
       <div class="sidebar">
-        <h2>QuickAccess</h2>
+        <h2>QuickAccess</h2>    
         <ul>
             <li><a href="#home">Home</a></li>
             <li><a href="#analytics">Ad Requests</a></li>
             <li><a href="/search">Search</a></li>
             <li><a href="#profile">Public Campaigns</a></li>
             <li><a href="/logout">Log Out</a></li>
-        </ul>   
+        </ul>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>
