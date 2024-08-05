@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            user-select: none;
+        }
+
+        nav {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 60px;
+            color: #5195bd;
+            padding: 10px;
+            background-color: transparent;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card {
+            padding: 20px;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: transparent;
+            color: #fff;
+            max-width: 400px;
+            border: transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card:hover {
+            background-color: #121212;
+        }
+
+        .card:hover input {
+            color: #5195bd;
+        }
+
+        .card input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #000;
+            border: none;
+            border-bottom: 1px solid #fff;
+            color: #fff;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .card .buttons button {
+            width: 100%;
+            padding: 10px;
+            color: #fff;
+            background-color: #5195bd;
+            border: none;
+            border-radius: 10px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .card .buttons button:hover {
+            background-color: #417ca2;
+        }
+
+        .table-container {
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #5195bd;
+            color: #fff;
+        }
+
+        .table-container::-webkit-scrollbar {
+            width: 12px;
+            background-color: transparent;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .results {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .results h1, .results p {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>Search</h2>
+            <form method="post" action="/search">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="name" name="search" placeholder="Enter some keywords">
+                </div>
+                <div class="buttons">
+                    <button type="submit" class="btn btn-primary btn-block">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="results">
+        <h1>Search Results</h1>
+        {% if isInfluencer %}
+        <p>Campaigns Found:</p>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>CampaignID</th>
+                        <th>Campaign Name</th>
+                        <th>Expected Revenue</th>
+                        <th>Received Revenue</th>
+                        <th>Success Rate</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Campaign Niche</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in campaigns %}
+                    <tr>
+                        <td>{{ entry.campaign_id }}</td>
+                        <td>{{ entry.campaign_name }}</td>
+                        <td>{{ entry.revenue_expected }}</td>
+                        <td>{{ entry.revenue_received }}</td>
+                        <td>{{ entry.success_rate }}</td>
+                        <td>{{ entry.start_date }}</td>
+                        <td>{{ entry.end_date }}</td>
+                        <td>{{ entry.campaign_niche }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('campaign_advertisement')}}">
+                                <input type="hidden" name="campaign_id" value="{{ entry.campaign_id }}">
+                                <input type="hidden" name="niche_id" value="{{ entry.niche_id }}">
+                                <button type="submit">View</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>Users Found :</p>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>UserID</th>
+                        <th>User Name</th>
+                        <th>Influencer ID</th>
+                        <th>Sponsor ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in users %}
+                    <tr>
+                        <td>{{ entry.user_id }}</td>
+                        <td>{{ entry.user_name }}</td>
+                        <td>{{ entry.influencer_id }}</td>
+                        <td>{{ entry.sponsor_id }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('campaign_advertisement')}}">
+                                <input type="hidden" name="campaign_id" value="{{ entry.user_id}}">
+                                <input type="hidden" name="type" value="user">
+                                <button type="submit">View</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

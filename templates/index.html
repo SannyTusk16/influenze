@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+    <style>
+      .navi{
+
+            font-size: 60px;
+            font-family: Arial;
+            line-height: 1.5;
+            color :	#5195bd;
+            background-color: transparent;
+            padding: 10px;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Minimum height of the viewport */
+            user-select: none; /* Disable text selection */
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height of the viewport */
+        }
+        .card {
+            flex: 1; /* Each card takes 1/3 of the container width */
+            padding: 20px;
+            height: 100%;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: transparent; /* Transparent background */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff; /* Default text color */
+        }
+        .card:hover {
+            background-color: 	#5195bd; /* Blue */
+            color: #000; /* Change text color to black on hover */
+        }
+        .card:hover input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-bottom: 1px solid transparent;
+            background-color: #fff; /* Turn text boxes white */
+            color: #000; /* Change text color inside input */
+            font-size: 15px;
+        }
+        .card input {
+            width: 0;
+            padding: 0;
+            margin: 0;
+            background:transparent;
+            border: none;
+            border-bottom:0;
+            color: transparent;
+            transition: background-color 0.5s ease-in-out, color 1s ease-in-out;
+            font-size: 0;
+        }
+        .card .buttons a {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            color: #fff;
+            text-decoration: none;
+            background: none; /* Remove background color */
+            border: none; /* Remove border */
+            transition: background 0.3s, color 0.3s;
+        }
+        .card .buttons a:hover {
+            color: #000;
+            background: #fff;
+            border-top: #5195bd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navi">INFLUENZE</nav>
+    <div class="container">
+        <div class="card">
+            <h2>Sponsors</h2>
+            <div class="buttons">
+                <a href="#">SIGN UP</a>
+                <a href="#">LOGIN</a>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Influencers</h2>
+            <div class="buttons">
+                <a href="#">SIGN UP</a>
+                <a href="#">LOGIN</a>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Admin</h2>
+            <div class="buttons">
+                <a href="#">SIGN UP</a>
+                <a href="#">LOGIN</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

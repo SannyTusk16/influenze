@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      .sidebar {
+        width: 150px;
+        background-color: #121212;
+        color: #5195bd;
+        padding: 20px;
+    }
+
+    .sidebar h2 {
+        text-align: center;
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar ul li {
+        margin: 15px 0;
+    }
+
+    .sidebar ul li a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+        border-radius: 5px;
+    align-items: center;
+        text-align: center;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .sidebar ul li a:hover {
+        background-color: #34495e;
+    }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full height of the viewport */
+            user-select: none; /* Disable text selection */
+        }
+
+        nav {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 60px;
+            font-family: Arial;
+            line-height: 1.5;
+            color: #5195bd;
+            padding: 10px;
+            background-color: transparent;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: transparent;
+            width: 100%;
+            height: 100%; /* Full height of the viewport */
+        }
+
+        .card {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            max-width: 400px;
+            border: transparent;
+        }
+
+        .card:hover {
+            background-color: #121212;
+        }
+
+        .card input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #000;
+            border: none;
+            border-bottom: 1px solid #fff;
+            color: #fff;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .card input:hover {
+            color: #5195bd;/* Change text color inside input */
+        }
+
+        .card .buttons a {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            color: #fff;
+            text-decoration: none;
+            background: none;
+            border-radius: 10px;
+            transition: background 0.3s, color 0.3s;
+            text-decoration: none;
+        }
+
+        .card .buttons a:hover {
+            background-color: #5195bd;
+        }
+        .form-group{
+          padding-right: 10%;  
+          width:150%;
+          justify-content: center;
+        }
+        .form-group:hover{
+          color: #5195bd;
+        }
+        .btn .btn-primary .btn-block{
+          width: 100%;
+          padding-left:20px;
+        }
+    </style>
+</head>
+<body>
+    <nav>INFLUENZE</nav>
+    <div class="container">
+        <div class="card">
+            <h2>New Campaign</h2>
+            <form method="post" action="/sponsor/new_campaign">
+              <div class="form-group">
+                <input type="text" class="form-control" id="Campaign Name" name="campaign_name" placeholder="Enter your campaign name">
+              </div>
+              <div class="form-group">
+                <input type="revenue_expected" class="form-control" id="revenue_expected" name="revenue_expected" placeholder="Revenue Expected">
+              </div>
+              <div class="form-group">
+                <input type="date" class="form-control" id="start_date" name="start_date" placeholder="Enter your password">
+              </div>
+              <div class="form-group">
+                <input type="date" class="form-control" id="end_date" name="end_date" placeholder="Enter your password">
+              </div>
+              <div class="form-group">
+                <input type="niche_name" class="form-control" id="niche" name="niche_name" placeholder="The Niche it caters to">
+              </div>
+              <div class="form-group">
+                <input type="visibility" class="form-control" id="visibility" name="visibility" placeholder="Type No for private">
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Register Campaign</button>
+            </form>
+        </div>
+    </div>
+</body> 
+</html>

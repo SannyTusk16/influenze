@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+    <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Dashboard</title>
+  <style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        height: 100vh;
+    }
+
+    .sidebar {
+        width: 150px;
+        background-color: #121212;
+        color: #5195bd;
+        padding: 20px;
+    }
+
+    .sidebar h2 {
+        text-align: center;
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar ul li {
+        margin: 15px 0;
+    }
+
+    .sidebar ul li a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+        border-radius: 5px;
+    align-items: center;
+        text-align: center;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .sidebar ul li a:hover {
+        background-color: #34495e;
+    }
+
+    .main-content {
+        flex: 1;
+        padding: 20px;
+        background-color: #000;
+        overflow-y: auto;
+    }
+
+    header {
+        background-color:#000;
+        color: #5195bd;
+        padding: 20px;
+        text-align: center;
+        border-radius: 5px;
+    }
+
+    header:hover{
+        background-color: #121212;
+        color: aquamarine;
+        transition-duration:0.4s ;
+        transition-timing-function: ease-in-out;
+    }
+
+    section {
+        margin: 20px 0;
+        padding: 20px;
+        background-color: #000;
+        color:rgb(191, 204, 212);
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    section:hover{
+        background-color: #121212;
+        color: #5195bd;
+        font-size: 20px;
+        transition-duration: 0.4s;
+        padding: 25px;
+    }
+    h1, h2 {
+        margin: 0;
+    }
+
+    p {
+        margin: 15px 0 0;
+    }
+
+    .flex-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Adjust the gap between rows as needed */
+        }
+
+        .row {
+            /* padding: 20px; */
+            /* background-color:#121212; */
+            justify-content: center;
+            border: 1px solid transparent;
+        }
+
+        /* body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full height of the viewport 
+            user-select: none; /* Disable text selection 
+        } */
+
+        nav {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 60px;
+            font-family: Arial;
+            line-height: 1.5;
+            color: #5195bd;
+            padding: 10px;
+            background-color: transparent;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: transparent;
+            width: 100%;
+            height: 100%; /* Full height of the viewport */
+        }
+
+        .card {
+            /* flex: 1; */
+            padding: 20px;
+
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: transparent; /* Transparent background */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            width: 380px;
+            height: 400px;
+            border: transparent;
+        }
+
+        .card:hover {
+            background-color: #121212;
+        }
+
+        .card:hover input {
+            color: #5195bd;
+        }
+
+        .card input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #000;
+            border: none;
+            border-bottom: 1px solid #fff;
+            color: #fff;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .card .buttons a {
+            display: block;
+            margin: 10px 0;
+            width: 100%;
+            padding: 10px;
+            color: #fff;  
+            text-decoration: none;
+            background: none;
+            border-radius: 10px;
+            transition: background 0.3s, color 0.3s;
+            text-decoration: none;
+        }
+
+        .card .buttons a:hover {
+            background-color: #5195bd;
+        }
+  </style>
+  
+</head>
+<body>
+    <div class="main-content">
+        <header>
+            <h1>Want to sponsor a Campaign {{session['user']}} ?</h1>
+        </header>
+        <section id="home">
+            <h2>New Campaign</h2>
+            <p>
+                <form method="post" action="/influencerlogin">
+                    <div class="form-group">
+                      <input type="text" class="form-control" id="name" name="user_name" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                      <input type="email" class="form-control" id="email" name="user_email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                      <input type="password" class="form-control" id="password" name="user_password" placeholder="Enter your password">
+                    </div>
+                  <div class="buttons">
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    <a href="/influencer_register">SIGN UP</a>
+                  </div>
+                  </form>
+            </p>
+        </section>
+        <section id="analytics">
+            <h2>Analytics</h2>
+            <p>This is the analytics section.</p>
+        </section>
+        <section id="settings">
+            <h2>Settings</h2>
+            <p>This is the settings section.</p>
+        </section>
+        <section id="profile">
+            <h2>Profile</h2>
+            <p>This is the profile section.</p>
+        </section>
+    </div>
+      <div class="sidebar">
+        <h2>QuickAccess</h2>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#analytics">Sponsor Campaigns</a></li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="#profile">Begin Campaign</a></li>
+            <li><a href="">Log Out</a></li>
+        </ul>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
