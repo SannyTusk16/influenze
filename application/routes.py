@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash, session
-from main import app, db  # Ensure you import db for database operations
+from main import app, db
 from datetime import datetime
-from application.model import *  # Ensure correct models are imported
+from application.model import *
 
 @app.route("/")
 def index():
@@ -52,7 +52,7 @@ def sponsor_register():
         if request.form.get('user_password') != request.form.get('user_confirm_password'):
             flash('Passwords do not match')
             return render_template('sponsor_register.html')
-
+        
         user_name = request.form.get('user_name')
         user_email = request.form.get('user_email')
         user_password = request.form.get('user_password')
@@ -244,8 +244,6 @@ def confirm_update_advertisement():
         edit_advertisement.budget=request.form.get('budget')
         
         db.session.commit()
-        # session['sponsor_id']=session['user_id'].sponsor_id
-        # sponsor = Sponsor.query.filter_by(sponsor_id=session['sponsor_id']).first()
         
         print(session['user_id'])
         return redirect(url_for('sponsor_dashboard'))
@@ -298,13 +296,10 @@ def confirm_update_campaign():
         edit_campaign.campaign_niche=request.form.get('campaign_niche')
         
         db.session.commit()
-        # session['sponsor_id']=session['user_id'].sponsor_id
-        # sponsor = Sponsor.query.filter_by(sponsor_id=session['sponsor_id']).first()
         
         print(session['user_id'])
         return redirect(url_for('sponsor_dashboard'))
     
-#WORK IN PROGRESS
 @app.route('/sponsor/update', methods=['GET','POST'])
 def sponsor_update():
     if(request.method=='GET'):
@@ -315,7 +310,6 @@ def sponsor_update():
         
         new_user.user_name = request.form.get('user_name')
         new_user.user_password = request.form.get('user_password')
-        # new_user.user_company = request.form.get('company')
         
         if(session['user_role']=='Sponsor'):
             sponsor_id=new_user.sponsor_id 
@@ -324,7 +318,6 @@ def sponsor_update():
         db.session.commit()
         session.pop('user', None)
         return redirect(url_for("index"))
-        #return render_template('base.html')
         
 @app.route('/sponsor/negotiation')
 def negotiation_requests():
@@ -339,9 +332,6 @@ def negotiation_requests():
         for i in campaign:
             advertisements = Advertisement.query.filter_by(campaign_id=i.campaign_id).filter(Advertisement.status.notin_(['Requested', 'Accepted', 'Rejected'])).all()
             a.append(advertisements)
-        # campaign_id=campaign.campaign_id
-        # advertisements = Advertisement.query.filter_by(campaign_id=campaign.campaign_id).filter(Advertisement.status.in_(['Requested', 'Accepted', 'Rejected'])).all()
-        # a.append(advertisements)
         return render_template('negotiation_requests.html',a=a)
     
 @app.route("/influencerlogin", methods=['GET', 'POST'])
@@ -457,7 +447,7 @@ def influencer_dashboard():
 def admin_login():
     if request.method == 'GET':
         return render_template('login_admin.html')
-    elif request.method == 'POST':  # Changed 'PUT' to 'POST'
+    elif request.method == 'POST':
         username = request.form.get('user_name')
         password = request.form.get('user_password')
         mail = request.form.get('user_email')
@@ -509,8 +499,8 @@ def search():
         isInfluencer = True
         if session['user_role'] == 'Sponsor':
             isInfluencer = False
-        campaigns = Campaign.query.all()
-        users = User.query.filter_by(user_role='Influencer')
+        campaigns = Campaign.query.filter(campaigns.visibility!='N').all()
+        users = User.query.filter_by(user_role='Influencer').filter(User.flag != 'Yes').all()
         return render_template('search.html',users=users,campaigns=campaigns,isInfluencer = isInfluencer)
     if request.method == 'POST':
         search = request.form.get('search')
@@ -523,9 +513,7 @@ def search():
             isInfluencer = False
         
         campaigns = Campaign.query.filter_by(campaign_name = search).all()
-        user = User.query.filter_by(user_name = search).all()
-        advertisements = Advertisement.query.filter_by(advertisement_name = search).all()
-        
+        user = User.query.filter_by(user_name = search).all()        
         print(session['user_name'])
         
         print("Campaigns")
@@ -569,4 +557,29 @@ def search_campaign_advertisement():
     
         
         return render_template('search_campaign_advertisement.html',campaign_advertisement = campaign_advertisement,campaign = Campaign.query.filter_by(campaign_id=campaign_id).first(),influencer_id=session['influencer_id'])
+
+
+@app.route('/admin_flag',methods=['GET','POST'])
+def admin_flag():
+    if request.method=='POST':
+        user_id=request.form.get('user_id')
         
+        print(user_id)
+        
+        user=User.query.filter_by(user_id=user_id).first()
+        
+        user.flag='Yes'
+        
+        print(user.user_id)
+        
+        print(user.flag)
+        
+        db.session.commit()
+        
+        users=User.query.all()
+        
+        campaigns = Campaign.query.all()
+        
+        advertisements = Advertisement.query.all()
+        
+        return render_template('admin_dashboard.html',users=users,campaigns=campaigns,advertisements=advertisements)        

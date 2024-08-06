@@ -148,6 +148,7 @@ class User(db.Model):
     user_name = db.Column(db.String(80), nullable=False)
     influencer_id=db.Column(db.Integer,db.ForeignKey('influencer.influencer_id'),nullable=True)
     sponsor_id=db.Column(db.Integer,db.ForeignKey('sponsor.sponsor_id'),nullable=True)
+    flag = db.Column(db.String(3),nullable=True)
 
     user_roles = db.relationship('Role', secondary='role_user_association', back_populates='role_users')
     user_influencers=db.relationship('Influencer',secondary='influencer_user_association',back_populates='influencer_users')

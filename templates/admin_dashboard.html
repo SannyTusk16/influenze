@@ -166,7 +166,7 @@
                             <th>User Role</th>
                             <th>Sponsor ID</th>
                             <th>Influencer ID</th>
-                            <!-- <th>Notes</th> -->
+                            <th>Flagged</th>
                     </thead>
                     <tbody>
                         {% for entry in users %}
@@ -176,6 +176,13 @@
                         <td>{{ entry.user_role }}</td>
                         <td>{{ entry.sponsor_id }}</td>
                         <td>{{ entry.influencer_id }}</td>
+                        <td>{{entry.flag}}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin_flag') }}">
+                                <input type="hidden" name="user_id" value="{{ entry.user_id }}">
+                                <button type="submit">flag</button>
+                            </form>
+                        </td>
                         {% endfor %} 
                     </tbody>
 
@@ -244,17 +251,5 @@
                 </table>
             </div>
         </section>
-    </div>
-      <div class="sidebar">
-        <h2>QuickAccess</h2>
-        <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#analytics">Ad Requests</a></li>
-            <li><a href="/search">Search</a></li>
-            <li><a href="#profile">Public Campaigns</a></li>
-            <li><a href="/logout">Log Out</a></li>
-        </ul>   
-    </div>
-    <script src="script.js"></script>
 </body>
 </html>
