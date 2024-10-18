@@ -1,0 +1,118 @@
+/* General body styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of the viewport */
+    user-select: none; /* Disable text selection */
+}
+
+/* Navbar and navigation styles */
+.navbar {
+    color: #fff;
+    font-size: 20px;
+}
+
+.navi {
+    font-size: 60px;
+    flex: 1;
+    font-family: Arial;
+    text-align: center;
+    line-height: 1.5;
+    color: #5195bd;
+    background-color: transparent;
+    padding: 10px;
+}
+
+nav {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 60px;
+    font-family: Arial;
+    line-height: 1.5;
+    color: #5195bd;
+    padding: 10px;
+    background-color: transparent;
+}
+
+/* Container styling */
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height of the viewport */
+    border: transparent;
+}
+
+/* Card component styling */
+.card {
+    flex: 1;
+    padding: 20px;
+    text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: transparent; /* Transparent background */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    max-width: 400px;
+    border: transparent;
+}
+
+.card:hover {
+    background-color: #5195bd; /* Blue background on hover */
+    color: #000; /* Change text color to black on hover */
+}
+
+.card:hover input {
+    color: #5195bd;
+}
+
+/* Input styling inside card */
+.card input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background: #000;
+    border: none;
+    border-bottom: 1px solid #fff;
+    color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Button and link styling inside card */
+.card .buttons a {
+    display: block;
+    margin: 10px 0;
+    width: 100%;
+    padding: 10px;
+    color: #fff;  
+    text-decoration: none;
+    background: none;
+    border-radius: 10px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.card .buttons a:hover {
+    background-color: #5195bd;
+}
+
+/* Button styling */
+.btn {
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #fff;
+    text-underline-offset: 20px;
+    background-color: transparent;
+}
+
