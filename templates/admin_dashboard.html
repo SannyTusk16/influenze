@@ -203,6 +203,9 @@
                             <th>End Date</th>
                             <th>Campaign Niche</th>
                             <th>Visiblity</th>
+                            <th> Approval Status</th>
+                            <th></th>
+
                             <!-- <th>Notes</th> -->
                     </thead>
                     <tbody>
@@ -216,6 +219,13 @@
                         <td>{{ entry.end_date }}</td>
                         <td>{{ entry.campaign_niche }}</td>
                         <td>{{ entry.visibility }}</td>
+                        <td>{{ entry.campaign_approval }}</td>
+                        <td> 
+                            <form method="POST" action="{{ url_for('admin_approval') }}">
+                                <input type="hidden" name="campaign_id" value="{{ entry.campaign_id }}">
+                                <button type="submit">Toggle</button>
+                            </form>
+                        </td>
                         {% endfor %} 
                     </tbody>
 

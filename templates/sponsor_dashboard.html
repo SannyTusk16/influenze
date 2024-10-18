@@ -168,6 +168,7 @@
                             <th>Start Date</th>
                             <th>End Date</th>
                             <th>Campaign Niche</th>
+                            <th colspan="3"> Operations </th>
                     </thead>
                     <tbody>
                         {% for entry in campaign %}
@@ -184,19 +185,19 @@
                             <form method="POST" action="{{ url_for('campaign_advertisement')}}">
                                 <input type="hidden" name="campaign_id" value="{{ entry.campaign_id }}">
                                 <input type="hidden" name="campaign_niche" value="{{ entry.campaign_niche }}">
-                                <button type="submit">View</button>
+                                <button type="submit" {% if entry.campaign_approval != 'Y' %}disabled{% endif %}>View</button>
                             </form>
                         </td>
                         <td>
                             <form method="POST" action="{{ url_for('delete_campaign') }}">
                             <input type="hidden" name="campaign_id" value="{{ entry.campaign_id }}">
-                            <button type="submit">Delete</button>
+                            <button type="submit" {% if entry.campaign_approval != 'Y' %}disabled{% endif %}>Delete</button>
                             </form>
                         </td>
                         <td>
                             <form method="POST" action="{{ url_for('update_campaign') }}">
                             <input type="hidden" name="campaign_id" value="{{ entry.campaign_id }}">
-                            <button type="submit">Update</button>
+                            <button type="submit" {% if entry.campaign_approval != 'Y' %}disabled{% endif %}>Update</button>
                             </form>
                         </td>      
                         </tr>

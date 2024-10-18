@@ -33,6 +33,7 @@ class Campaign(db.Model):
     end_date = db.Column(db.Date, nullable=True)
     campaign_niche = db.Column(db.String(80), db.ForeignKey('niche.niche_name'))
     advertisement_id=db.Column(db.Integer,db.ForeignKey('advertisement.id'))
+    campaign_approval = db.Column(db.String(1))
     visibility=db.Column(db.String(1),nullable=True)
     
     

@@ -68,23 +68,27 @@ def create_app():
         
         # Create dummy influencer details if it doesn't exist
         if not Influencer.query.filter_by(influencer_id=1).first():
-            admin_role = Influencer(influencer_reach=0, influencer_rating=0)
-            db.session.add(admin_role)
+            influencer = Influencer(influencer_reach=0, influencer_rating=0)
+            db.session.add(influencer)
         
         # Create dummy sponsor details if it doesn't exist
         if not Sponsor.query.filter_by(sponsor_id=1).first():
-            admin_role = Sponsor(sponsor_company='None')
-            db.session.add(admin_role)
+            sponsor = Sponsor(sponsor_company='None')
+            db.session.add(sponsor)
         
-        #Dummy Campaign  
         if not Campaign.query.filter_by(campaign_id='1').first():
-            admin_role = Campaign(campaign_id='1',campaign_name='Campaign',revenue_expected=0,campaign_niche="Niche",sponsor_id=1)
-            db.session.add(admin_role)
-        
-        #DUmmy Niche    
-        if not Niche.query.filter_by(niche_id='1').first():
-            admin_role = Niche(niche_id='1',niche_name='Niche',niche_population=1000)
-            db.session.add(admin_role)
+            campaign = Campaign(campaign_id='1',campaign_name='Campaign',revenue_expected=0,campaign_niche="Niche",sponsor_id=1,campaign_approval="N")
+            niche = Niche.query.filter_by(niche_name=campaign.campaign_niche).first()
+            if not niche:
+                niche = Niche(niche_name=campaign.campaign_niche, niche_population=1000)
+                db.session.add(niche)
+            else:
+                niche=Niche.query.filter_by(niche_name=campaign.campaign_niche).first()
+                niche.niche_population = niche.niche_population+1
+
+            campaign.campaign_niches.append(niche)
+            db.session.add(campaign)
+            
         
         db.session.commit()
     

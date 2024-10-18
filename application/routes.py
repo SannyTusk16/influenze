@@ -499,7 +499,7 @@ def search():
         isInfluencer = True
         if session['user_role'] == 'Sponsor':
             isInfluencer = False
-        campaigns = Campaign.query.filter(campaigns.visibility!='N').all()
+        campaigns = Campaign.query.filter_by(visibility='Y').all()
         users = User.query.filter_by(user_role='Influencer').filter(User.flag != 'Yes').all()
         return render_template('search.html',users=users,campaigns=campaigns,isInfluencer = isInfluencer)
     if request.method == 'POST':
@@ -583,3 +583,26 @@ def admin_flag():
         advertisements = Advertisement.query.all()
         
         return render_template('admin_dashboard.html',users=users,campaigns=campaigns,advertisements=advertisements)        
+@app.route('/admin_approval',methods=['GET','POST'])
+def admin_approval():
+    if request.method=="POST":
+        campaign_id=request.form.get('campaign_id')
+        
+        print(campaign_id)
+        
+        campaign=Campaign.query.filter_by(campaign_id=campaign_id).first()
+        
+        if(campaign.campaign_approval=="Y"):
+            campaign.campaign_approval="N"
+        if(campaign.campaign_approval=="N"):
+            campaign.campaign_approval="Y"
+        
+        db.session.commit()
+        
+        users=User.query.all()
+        
+        campaigns = Campaign.query.all()
+        
+        advertisements = Advertisement.query.all()
+        
+        return render_template('admin_dashboard.html',users=users,campaigns=campaigns,advertisements=advertisements)

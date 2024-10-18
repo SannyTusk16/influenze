@@ -164,7 +164,9 @@
                             <th>Advertisement Name</th>
                             <th>Campaign ID</th>
                             <th>Campaign Niche</th>
+                            <th>New Budget</th>
                             <th>Status</th>
+                            <th colspan="2">Operations</th>
                     </thead>
                     <tbody>
                         {% for e in a %}
@@ -175,6 +177,7 @@
                         <td>{{ entry.advertisement_name }}</td>
                         <td>{{ entry.campaign_id }}</td>
                         <td>{{ entry.niche_id }}</td>
+                        <td> {{ entry.budget }}</td>
                         <td>{{ entry.status }}</td>
                         <td>
                             <form method="POST" action="{{ url_for('sponsor_dashboard') }}">
