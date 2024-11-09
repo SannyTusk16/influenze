@@ -1,3 +1,6 @@
 flask
 flask-SQLAlchemy
 jinja2
+flask_security_too
+argon2_cffi
+flask-migrate

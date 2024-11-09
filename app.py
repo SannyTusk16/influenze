@@ -1,71 +1,90 @@
 from flask import Flask, render_template,request,flash,redirect,url_for
 from application.config import Config
-from application.database import db
 from application.model import *
+from application.database import db
+from flask_migrate import Migrate
+from flask_login import LoginManager
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     db.init_app(app)
+    app.config['SECRET_KEY'] = 'supersecretkey'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:D:\Codes\MAD2Proj - Copy\influenze\instance\data.sqlite3'
+    app.config['SECURITY_PASSWORD_SALT'] = 'my_salt'
+    migrate = Migrate(app, db)
+    
 
     with app.app_context():
         db.create_all()
 
         # Create initial roles if they do not exist
         if not Role.query.filter_by(name='Admin').first():
-            admin_role = Role(name='Admin', description='Admin Role')
-            db.session.add(admin_role)
+            user_datastore.create_role(name = 'Admin', description='Admin Role')
+            db.session.commit()
+            
         else:
             admin_role = Role.query.filter_by(name='Admin').first()
 
         if not Role.query.filter_by(name='Influencer').first():
-            influencer_role = Role(name='Influencer', description='Influencer/Advertiser')
-            db.session.add(influencer_role)
+            user_datastore.create_role(name = "Influencer",description = "Influencer")
+            db.session.commit()
         else:
             influencer_role = Role.query.filter_by(name='Influencer').first()
 
         if not Role.query.filter_by(name='Sponsor').first():
-            sponsor_role = Role(name='Sponsor', description='Funds the campaigns/ads')
-            db.session.add(sponsor_role)
+            user_datastore.create_role(name = "Sponsor",description = "Sponsor")
+            db.session.commit()
         else:
             sponsor_role = Role.query.filter_by(name='Sponsor').first()
 
         #Create an initial admin user if it does not exist
-        if not User.query.filter_by(user_id=1).first():
-            admin_user = User( 
-                user_password='admin', 
-                user_mail='admin@gmail.com', 
+        if not User.query.filter_by(id=1).first():
+            user = user_datastore.create_user(password='admin', 
+                email='admin@gmail.com', 
                 user_name='admin',
                 user_role='Admin',
-                user_id=1
-            )
-            admin_user.user_roles.append(admin_role)
-            db.session.add(admin_user)
+                active = True,
+                id=1)
+            admin_role = user_datastore.find_role("Admin")
+            user_datastore.add_role_to_user(user, admin_role)
+            db.session.commit()
+
         
-        if not User.query.filter_by(user_id=2).first():
-            sponsor_user = User( 
-                user_password='sponsor', 
-                user_mail='sponsor@gmail.com', 
+        #Create an initial sponsor user
+        if not User.query.filter_by(id=2).first():
+            user = user_datastore.create_user( 
+                password='sponsor', 
+                email='sponsor@gmail.com', 
                 user_name='sponsor',
                 user_role='Sponsor',
-                user_id=2,
+                id=2,
                 sponsor_id=1,
+                active = True
             )
-            sponsor_user.user_roles.append(sponsor_role)
-            db.session.add(sponsor_user)
+            sponsor_role = user_datastore.find_role("Sponsor")
+            user_datastore.add_role_to_user(user, sponsor_role)
+
+            # Commit the changes to the database
+            db.session.commit()
+
             
-        if not User.query.filter_by(user_id=3).first():
-            influencer_user = User( 
-                user_password='influencer', 
-                user_mail='influencer@gmail.com', 
+        if not User.query.filter_by(id=3).first():
+            user = user_datastore.create_user( 
+                password='influencer', 
+                email='influencer@gmail.com', 
                 user_name='influencer',
                 user_role='Influencer',
-                user_id=3,
+                id=3,
                 influencer_id=1,
+                active = True
             )
-            influencer_user.user_roles.append(influencer_role)
-            db.session.add(influencer_user)
-        
+            influencer_role = user_datastore.find_role("Influencer")
+            user_datastore.add_role_to_user(user, influencer_role)
+
+            # Commit the changes to the database
+            db.session.commit()
+
         # Create dummy influencer details if it doesn't exist
         if not Influencer.query.filter_by(influencer_id=1).first():
             influencer = Influencer(influencer_reach=0, influencer_rating=0)
@@ -91,7 +110,8 @@ def create_app():
             
         
         db.session.commit()
-    
+
+
     return app
 
 app = create_app()

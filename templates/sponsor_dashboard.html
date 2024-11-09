@@ -9,7 +9,7 @@
 <body>
     <div class="main-content">
         <header>
-            <h1>Welcome {{session['user_name']}}</h1>
+            <h1>Welcome {{current_user.user_name}}</h1>
         </header>
         <section id="analytics">
             <h2>Analytics</h2>
@@ -66,9 +66,9 @@
         </section>
         <section id="profile">
             <h2>Profile</h2>
-            <p>User ID : {{user.user_id}}</p>
+            <p>User ID : {{user.id}}</p>
             <p>Sponsor ID : {{user.sponsor_id}}</p>
-            <p>Mail ID : {{user.user_mail}}</p>
+            <p>Mail ID : {{user.email}}</p>
             <p>Sponsor Company : {{sponsor.sponsor_company}}</p>
         </section>
         <section id="settings">
@@ -79,7 +79,7 @@
                     </button>
                 </div>
             </form>
-        </section>5
+        </section>
     </div>
       <div class="sidebar">
         <h2>QuickAccess</h2>

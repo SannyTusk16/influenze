@@ -1,7 +1,30 @@
-from flask import render_template, request, redirect, url_for, flash, session
-from main import app, db
+from flask import render_template, request, redirect, url_for, flash, session,make_response
+from app import app, db
 from datetime import datetime
+from application.database import db
 from application.model import *
+from flask_security import LoginForm,logout_user,Security,current_user 
+from flask_login import login_user # Import login_user from flask_login
+from werkzeug.security import check_password_hash
+from flask_security.utils import verify_password
+from flask_login import LoginManager
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+security = Security(app, user_datastore)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.filter_by(id=user_id)
+
+def render_with_no_cache(template_name, **context):
+    """Helper function to render a template with cache disabled."""
+    response = make_response(render_template(template_name, **context))
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    return response
+
+
 
 @app.route("/")
 def index():
@@ -9,40 +32,38 @@ def index():
 
 @app.route("/sponsorlogin", methods=['GET', 'POST'])
 def sponsor_login():
-    if request.method == 'GET':
-        return render_template('login_sponsor.html')
-    elif request.method == 'POST':
-        username = request.form.get('user_name')
-        password = request.form.get('user_password')
-        email = request.form.get('user_email')
+    form = LoginForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        
+        user = User.query.filter_by(email=form.email.data).first()
+        
+        if user and verify_password(form.password.data, user.password):
+            # Log the user in to set up session and make current_user available
+            login_user(user)
+            session['id'] = user.id
+            session['sponsor_id'] = user.sponsor_id
+            session['influencer_id'] = user.influencer_id
+            session['user_name']  = user.user_name
+            sponsor = Sponsor.query.filter_by(sponsor_id=user.sponsor_id).first()
+            campaign = Campaign.query.filter_by(sponsor_id=user.sponsor_id).all()
 
-        if not password or not username or not email:
-            flash('Please enter Password, UserName, and Email')
-            return render_template('login_sponsor.html')
+            # Check if user is authenticated and print session data
+            if current_user.is_authenticated:
+                print(f"Session data: {session}")
+                print(f"User ID is: {current_user.id}")
+                print(f"Influencer ID is {user.influencer_id}")
+            else:
+                print("No user is logged in.")
 
-        user = User.query.filter_by(user_name=username).first()
-        if not user:
-            flash('User Not Found')
-            return render_template('login_sponsor.html')
-
-        if user.user_password == password and user.user_mail == email:
-            print(user.sponsor_id)
-            if user.user_role != 'Sponsor':
-                return "<h1>Incorrect Role</h1>"
-            session['user_name'] = user.user_name
-            session['user_id']=user.user_id
-            session['user_role']=user.user_role
-            session['sponsor_id']=user.sponsor_id
-            
-            sponsor = Sponsor.query.filter_by(sponsor_id=session['sponsor_id']).first()
-
-            campaign = Campaign.query.filter_by(sponsor_id=session['sponsor_id']).all()
-            print(user)
-            print(sponsor.sponsor_company)
-            return render_template('sponsor_dashboard.html',campaign=campaign,user=user,sponsor=sponsor)
+            # Redirect to the sponsor dashboard
+            return render_with_no_cache('sponsor_dashboard.html', campaign=campaign, user=user, sponsor=sponsor)
         else:
+            # If authentication fails
             flash('Incorrect credentials')
-            return render_template('login_sponsor.html')
+            print("Wrong Credentials")
+    
+    # Render the login page for GET requests
+    return render_template('login_sponsor.html',form = form)
         
 @app.route("/sponsor_register", methods=['GET', 'POST'])
 def sponsor_register():
@@ -54,8 +75,8 @@ def sponsor_register():
             return render_template('sponsor_register.html')
         
         user_name = request.form.get('user_name')
-        user_email = request.form.get('user_email')
-        user_password = request.form.get('user_password')
+        email = request.form.get('user_email')
+        password = request.form.get('user_password')
         user_role = "Sponsor"
         sponsor_company=request.form.get('company')
         
@@ -63,8 +84,9 @@ def sponsor_register():
         my_sponsor = User(
             user_role=user_role,
             user_name=user_name,
-            user_mail=user_email,
-            user_password=user_password,
+            email=email,
+            password=password,
+            active = True,
         )   
         
         sponsor_entry = Sponsor(sponsor_company=sponsor_company)
@@ -80,17 +102,10 @@ def sponsor_register():
 @app.route("/sponsor/dashboard", methods=['GET','POST'])
 def sponsor_dashboard():
     if request.method == 'GET':
-        campaign=Campaign.query.filter_by(sponsor_id=session['sponsor_id'])
-        username=session['user_name']
-        user = User.query.filter_by(user_name=username).first()
-        session['user_name'] = user.user_name
-        session['user_id']=user.user_id
-        session['user_role']=user.user_role
-        session['sponsor_id']=user.sponsor_id
-        sponsor = Sponsor.query.filter_by(sponsor_id=session['sponsor_id']).first()
-
         campaign = Campaign.query.filter_by(sponsor_id=session['sponsor_id']).all()
-        return render_template('sponsor_dashboard.html',campaign=campaign,user=user,sponsor=sponsor)
+        user = User.query.filter_by(user_name=session['user_name']).first()
+        sponsor = Sponsor.query.filter_by(sponsor_id=user.sponsor_id).first()
+        return render_with_no_cache('sponsor_dashboard.html', campaign=campaign, user=user, sponsor=sponsor)
     if request.method =='POST':
         sponsor = Sponsor.query.filter_by(sponsor_id=session['sponsor_id']).first()
         campaign = Campaign.query.filter_by(sponsor_id=session['sponsor_id']).all()
@@ -104,10 +119,11 @@ def new_campaign():
     if request.method == 'GET':
         return render_template('new_campaign.html')
     if request.method == 'POST':
-        sponsor_id=session.get('sponsor_id')
+        print(f"Current Sponsor ID {current_user.sponsor_id}")
+        sponsor_id=current_user.sponsor_id
         sponsor=Sponsor.query.filter_by(sponsor_id=sponsor_id)
-        user_id=session.get('user_id')
-        user=User.query.filter_by(user_id=user_id)
+        id=session.get('id')
+        user=User.query.filter_by(id=id)
         new_campaign_name = request.form.get('campaign_name')
         new_campaign_revenue_expected = request.form.get('revenue_expected')
         new_campaign_start_date0 = request.form.get('start_date')
@@ -190,7 +206,7 @@ def delete_campaign():
     flash('Campaign deleted successfully.')
     return redirect(url_for('sponsor_dashboard'))
 
-@app.route('/campaign/new_advertisement',methods=['POST','GET'])
+@app.route('/campaign/new_advertisement',methods=['POST'])
 def add_advertisement():
     if request.method=='POST':
         campaign_id=request.form.get('campaign_id')
@@ -245,7 +261,7 @@ def confirm_update_advertisement():
         
         db.session.commit()
         
-        print(session['user_id'])
+        print(session['id'])
         return redirect(url_for('sponsor_dashboard'))
 
 @app.route("/sponsor/campaign_update" ,methods=['GET','POST'])
@@ -297,7 +313,7 @@ def confirm_update_campaign():
         
         db.session.commit()
         
-        print(session['user_id'])
+        print(session['id'])
         return redirect(url_for('sponsor_dashboard'))
     
 @app.route('/sponsor/update', methods=['GET','POST'])
@@ -306,10 +322,10 @@ def sponsor_update():
         return render_template('update_sponsor.html')
     if(request.method=='POST'):
         
-        new_user=User.query.filter_by(user_id=session['user_id']).first()
+        new_user=User.query.filter_by(id=session['id']).first()
         
         new_user.user_name = request.form.get('user_name')
-        new_user.user_password = request.form.get('user_password')
+        new_user.password = request.form.get('user_password')
         
         if(session['user_role']=='Sponsor'):
             sponsor_id=new_user.sponsor_id 
@@ -322,8 +338,8 @@ def sponsor_update():
 @app.route('/sponsor/negotiation')
 def negotiation_requests():
     if request.method=='GET':
-        sponsor_id=session.get('user_id')
-        sponsor_id=User.query.filter_by(user_id=sponsor_id).first()
+        sponsor_id=session.get('id')
+        sponsor_id=User.query.filter_by(id=sponsor_id).first()
         sponsor_id=sponsor_id.sponsor_id
         print("Sponosr ID")
         print(sponsor_id)
@@ -333,46 +349,46 @@ def negotiation_requests():
             advertisements = Advertisement.query.filter_by(campaign_id=i.campaign_id).filter(Advertisement.status.notin_(['Requested', 'Accepted', 'Rejected'])).all()
             a.append(advertisements)
         return render_template('negotiation_requests.html',a=a)
-    
+
 @app.route("/influencerlogin", methods=['GET', 'POST'])
 def influencer_login():
-    if request.method == 'GET':
-        return render_template('login_influencer.html')
-    elif request.method == 'POST':
-        username = request.form.get('user_name')
-        password = request.form.get('user_password')
-        email = request.form.get('user_email')
-
-        if not password or not username or not email:
-            flash('Please enter Password, UserName, and Email')
-            return render_template('login_influencer.html')
-
-        user = User.query.filter_by(user_name=username).first()
-        if not user:
-            flash('User Not Found')
-            return render_template('login_influencer.html')
-
-        if user.user_password == password and user.user_mail == email:
-            if user.user_role != 'Influencer':
-                flash ('Incorrect Role')
-                return render_template('login_influencer.html')
-            session['user_name'] = user.user_name
-            session['user_id']=user.user_id
-            session['user_role']=user.user_role
-            session['influencer_id']=user.influencer_id
+    form = LoginForm()
+    if request.method == 'POST' and form.validate_on_submit():
         
-            influencer=Influencer.query.filter_by(influencer_id=user.influencer_id).first()
-            
-            advertisements=Advertisement.query.filter_by(influencer_id=influencer.influencer_id)
-            
-            advertisement_request=advertisements.filter_by(status='Requested')
-            
+        user = User.query.filter_by(email=form.email.data).first()
+        
+        if user and verify_password(form.password.data, user.password):
+            # Log the user in to set up session and make current_user available
+            login_user(user)
+            session['id'] = user.id
+            session['sponsor_id'] = user.sponsor_id
+            session['influencer_id'] = user.influencer_id
+            session['user_name']  = user.user_name
 
-            return render_template('influencer_dashboard.html',user=user,influencer=influencer,advertisements=advertisements,advertisement_request=advertisement_request)
+            # Check if the user is authenticated
+            if current_user.is_authenticated:
+                # Debugging session and user data
+                print(f"Session data: {session}")
+                print(f"User ID is: {current_user.id}")
+                print(f"Influencer ID is: {user.influencer_id}")
+            else:
+                print("No user is logged in.")
+
+            # Fetch influencer-specific data
+            influencer = Influencer.query.filter_by(influencer_id=user.influencer_id).first()
+            advertisements = Advertisement.query.filter_by(influencer_id=influencer.influencer_id).all()
+            advertisement_request = [ad for ad in advertisements if ad.status == 'Requested']
+
+            # Render the influencer dashboard with the relevant data
+            return render_with_no_cache('influencer_dashboard.html', user=user, influencer=influencer,
+                                        advertisements=advertisements, advertisement_request=advertisement_request)
         else:
-            flash('Incorrect credentials')
-            return render_template('login_influencer.html')
+            # Handle incorrect credentials
+            flash("Incorrect email or password. Please try again.", "danger")
+            print("Wrong credentials")
 
+    # Render the login page for GET requests or failed login attempts
+    return render_template('login_influencer.html',form = form)
 @app.route("/influencer_register", methods=['GET', 'POST'])
 def influencer_register():
     if request.method == 'GET':
@@ -384,7 +400,7 @@ def influencer_register():
 
         user_name = request.form.get('user_name')
         user_email = request.form.get('user_email')
-        user_password = request.form.get('user_password')
+        password = request.form.get('user_password')
         user_role = "Influencer"
         influencer_reach=request.form.get('reach')
         
@@ -395,8 +411,9 @@ def influencer_register():
         my_influencer = User(
             user_role=user_role,
             user_name=user_name,
-            user_mail=user_email,
-            user_password=user_password,
+            email=user_email,
+            password=password,
+            active = True
         )
         
         my_influencer.influencer_id=influencer_entry.influencer_id
@@ -445,9 +462,7 @@ def influencer_dashboard():
         
 @app.route("/adminlogin", methods=['GET', 'POST'])
 def admin_login():
-    if request.method == 'GET':
-        return render_template('login_admin.html')
-    elif request.method == 'POST':
+    if request.method == 'POST':
         username = request.form.get('user_name')
         password = request.form.get('user_password')
         mail = request.form.get('user_email')
@@ -456,7 +471,12 @@ def admin_login():
         users = User.query.all()
         campaigns = Campaign.query.all()
         
-        admin = User.query.filter_by(user_mail = mail).first()
+        admin = User.query.filter_by(email = mail).first()
+        
+        session['id'] = admin.id
+        session['sponsor_id'] = admin.sponsor_id
+        session['influencer_id'] = admin.influencer_id
+        session['user_name']  = admin.user_name
         
         if admin.user_role != 'Admin':
             flash('Not an Admin')
@@ -467,29 +487,23 @@ def admin_login():
             flash('User Not Found')
             return redirect(url_for('admin_login'))
 
-        if user.user_password == password:
-            return render_template('admin_dashboard.html',users = users,advertisements = advertisements,campaigns = campaigns)
+        if user.password == password:
+            return render_with_no_cache('admin_dashboard.html', users=users, advertisements=advertisements, campaigns=campaigns)
         else:
             flash('Incorrect Password Entered')
-            
-        users = User.query.all()
-        campaigns = Campaign.query.all()
-        advertisements = Advertisement.query.all()
-        
-        for i in users:
-            print(i.user_name)
-        
-        return render_template('admin_dashboard.html',users = users,advertisements = advertisements,campaigns = campaigns)
-
+    return render_template('login_admin.html')
 
 
 @app.route("/logout")
 def logout():
-    session.pop('user', None)
+    # Log the user out with Flask-Security's logout function
+    logout_user()
+
+    # Clear the session to remove any additional data
+    session.clear()
+
+    # Redirect to the index or login page
     return redirect(url_for('index'))
-
-
-
     
 
 
@@ -500,7 +514,7 @@ def search():
         if session['user_role'] == 'Sponsor':
             isInfluencer = False
         campaigns = Campaign.query.filter_by(visibility='Y').all()
-        users = User.query.filter_by(user_role='Influencer').filter(User.flag != 'Yes').all()
+        users = User.query.filter_by(user_role='Influencer').filter(User.active != True).all()
         return render_template('search.html',users=users,campaigns=campaigns,isInfluencer = isInfluencer)
     if request.method == 'POST':
         search = request.form.get('search')
@@ -559,30 +573,18 @@ def search_campaign_advertisement():
         return render_template('search_campaign_advertisement.html',campaign_advertisement = campaign_advertisement,campaign = Campaign.query.filter_by(campaign_id=campaign_id).first(),influencer_id=session['influencer_id'])
 
 
-@app.route('/admin_flag',methods=['GET','POST'])
+@app.route('/admin_flag',methods=['POST'])
 def admin_flag():
-    if request.method=='POST':
-        user_id=request.form.get('user_id')
-        
-        print(user_id)
-        
-        user=User.query.filter_by(user_id=user_id).first()
-        
-        user.flag='Yes'
-        
-        print(user.user_id)
-        
-        print(user.flag)
-        
-        db.session.commit()
-        
-        users=User.query.all()
-        
-        campaigns = Campaign.query.all()
-        
-        advertisements = Advertisement.query.all()
-        
-        return render_template('admin_dashboard.html',users=users,campaigns=campaigns,advertisements=advertisements)        
+    id = request.form.get('id')
+    user = User.query.filter_by(id=id).first()
+    user.active = True if user.active is None else ('No' if user.active == True else False)
+    db.session.commit()
+
+    users = User.query.all()
+    campaigns = Campaign.query.all()
+    advertisements = Advertisement.query.all()
+    return render_with_no_cache('admin_dashboard.html', users=users, campaigns=campaigns, advertisements=advertisements)
+    
 @app.route('/admin_approval',methods=['GET','POST'])
 def admin_approval():
     if request.method=="POST":

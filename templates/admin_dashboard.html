@@ -20,24 +20,33 @@
                     <thead>
                             <th>User ID</th>
                             <th>User Name</th>
-                            <th>User Role</th>
+                            <th>Role</th>
+                            <th>Email ID </th>
                             <th>Sponsor ID</th>
                             <th>Influencer ID</th>
-                            <th>Flagged</th>
+                            <th colspan="2">Active</th>
                     </thead>
                     <tbody>
                         {% for entry in users %}
                         <tr>
-                        <td>{{ entry.user_id }}</td>
+                        <td>{{ entry.id }}</td>
                         <td>{{ entry.user_name }}</td>
                         <td>{{ entry.user_role }}</td>
-                        <td>{{ entry.sponsor_id }}</td>
-                        <td>{{ entry.influencer_id }}</td>
-                        <td>{{entry.flag}}</td>
+                        <td>{{ entry.email }}</td>
+                        <td>{% if entry.sponsor_id is not none %}
+                                {{ entry.sponsor_id }}
+                            {% endif %}
+                        </td>
+                        <td> 
+                            {% if entry.influencer_id is not none %}
+                                {{ entry.influencer_id }}
+                            {% endif %}
+                        </td>
+                        <td>{{entry.active}}</td>
                         <td>
                             <form method="POST" action="{{ url_for('admin_flag') }}">
-                                <input type="hidden" name="user_id" value="{{ entry.user_id }}">
-                                <button type="submit">flag</button>
+                                <input type="hidden" name="user_id" value="{{ entry.id }}">
+                                <button type="submit">Toggle</button>
                             </form>
                         </td>
                         {% endfor %} 
@@ -60,8 +69,7 @@
                             <th>End Date</th>
                             <th>Campaign Niche</th>
                             <th>Visiblity</th>
-                            <th> Approval Status</th>
-                            <th></th>
+                            <th colspan="2"> Approval Status</th>
 
                             <!-- <th>Notes</th> -->
                     </thead>
