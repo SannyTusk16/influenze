@@ -4,6 +4,8 @@ from application.model import *
 from application.database import db
 from flask_migrate import Migrate
 from flask_login import LoginManager
+#redis server on 6380 :redis-server --port 6380
+#celery -A app.app_celery worker --loglevel=INFO
 
 def create_app():
     app = Flask(__name__)
@@ -110,11 +112,15 @@ def create_app():
             
         
         db.session.commit()
-
-
     return app
 
 app = create_app()
+
+from celery import Celery
+init_celery = Celery(app.import_name)
+import application.celery_config as celery_config
+init_celery.config_from_object(celery_config)
+app_celery = init_celery
 
 from application.routes import *
 

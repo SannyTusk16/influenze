@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, url_for, flash, session,ma
 from app import app, db
 from datetime import datetime
 from application.database import db
+import application.tasks 
 from application.model import *
 from flask_security import LoginForm,logout_user,Security,current_user 
 from flask_login import login_user # Import login_user from flask_login
@@ -56,6 +57,7 @@ def sponsor_login():
                 print("No user is logged in.")
 
             # Redirect to the sponsor dashboard
+            application.tasks.func.delay()
             return render_with_no_cache('sponsor_dashboard.html', campaign=campaign, user=user, sponsor=sponsor)
         else:
             # If authentication fails
